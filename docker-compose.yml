@@ -1,0 +1,59 @@
+version: "3.1"
+services:
+    db:
+        image: mysql
+        ports: 
+            - "3306:3306"
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_DATABASE: dbname
+            MYSQL_PASSWORD: test
+            MYSQL_ROOT_PASSWORD: test 
+        volumes:
+            - ./dump:/docker-entrypoint-initdb.d
+            - ./conf:/etc/mysql/conf.d
+            - persistent:/var/lib/mysql
+        networks:
+            - default
+    apache1:
+        build: .
+        container_name: apache1
+        ports:
+            - "81:80"
+        volumes:
+            - ./www/web1:/var/www/html
+        links:
+            - db
+        networks:
+            - default
+    apache2:
+        build: .
+        container_name: apache2
+        ports:
+            - "82:80"
+        volumes:
+            - ./www/web2:/var/www/html
+        links:
+            - db
+        networks:
+            - default
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links: 
+            - db:db
+        ports:
+            - 8000:80
+        environment:
+            MYSQL_USER: root
+            MYSQL_PASSWORD: test
+            MYSQL_ROOT_PASSWORD: test
+    haproxy:
+        image: haproxytech/haproxy-alpine:2.4
+        container_name: haproxy
+        ports:
+            - "80:80"
+            - "8404:8404"
+        volumes:
+            - ./:/usr/local/etc/haproxy:ro
+volumes:
+    persistent:
