@@ -8,9 +8,9 @@
     <body>
         <div class="container-fluid">
             <?php
-                echo "<h1>¡Bienvenido al servidor apache1!</h1>";
+                echo "<h1>Servidor Apache 1 de Juanchu</h1>";
 
-                $conn = mysqli_connect('db', 'root', 'test', "dbname");
+                $conn = mysqli_connect('192.168.0.109', 'root', 'bolson', "devopsdb");
 
                 $query = 'SELECT * From Person';
                 $result = mysqli_query($conn, $query);
